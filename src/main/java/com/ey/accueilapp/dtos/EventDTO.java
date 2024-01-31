@@ -22,6 +22,7 @@ public class EventDTO {
     private LocalTime fin;
     private String titre;
     private String name;
-
+    private int nombreParticipants;
+    private int nombreAdultes;
     private TypeEvent typeEvent;
 }

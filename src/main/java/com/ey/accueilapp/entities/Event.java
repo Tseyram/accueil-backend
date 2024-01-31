@@ -43,6 +43,7 @@ public class Event {
     private String titre;
     private String name;
     private int nombreParticipants;
+    private int nombreAdultes;
     @Enumerated(EnumType.STRING)
     private TypeEvent typeEvent;
 }

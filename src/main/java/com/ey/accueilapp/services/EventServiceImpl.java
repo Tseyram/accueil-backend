@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.ey.accueilapp.dtos.CulteDTO;
 import com.ey.accueilapp.dtos.EventHistoryDTO;
@@ -30,11 +31,6 @@ public class EventServiceImpl implements EventService {
     private PhysicalEventRepository physicalEventRepository;
     private OnlineEventRepository onlineEventRepository;
     private EventMapper dtoMapper;
-
-    @Override
-    public void loadData(String fileName) {
-        // je charge les données à partir d'un fichier excel
-    }
 
     @Override
     public PhysicalEventDTO savePhysicalEvent(PhysicalEvent event) {
@@ -131,4 +127,46 @@ public class EventServiceImpl implements EventService {
                 physicalEventRepository.findById(id).orElseThrow(() -> new RuntimeException("no culte found")));
     }
 
+    @Override
+    public void saveEventsFromExcel(MultipartFile file) {
+
+        if (ExcelUploadService.isValid(file)) {
+            try {
+                List<PhysicalEventDTO> events = ExcelUploadService.getEventDatFromExcelFor2023(file.getInputStream());
+                System.out.println("first");
+                for (PhysicalEventDTO e : events) {
+                    if (e.getTypeEvent() == TypeEvent.CULTE) {
+                        CulteDTO eDTO = (CulteDTO) e;
+                        this.saveCulte(dtoMapper.fromCulteDTO(eDTO));
+                    } else {
+                        this.savePhysicalEvent(dtoMapper.fromPhysicalEventDTO(e));
+                    }
+
+                    System.out.println("first");
+
+                }
+            } catch (Exception e) {
+                throw new IllegalArgumentException("The file is not a valid excel file");
+            }
+
+        }
+    }
+
+    @Override
+    public List<PhysicalEventDTO> getAllEventsOf2023FromExcel() {
+        LocalDate debut = LocalDate.of(01, 01, 2023);
+        LocalDate fin = LocalDate.of(31, 12, 2023);
+        return physicalEventRepository.findByDateBetween(debut, fin).stream()
+                .map(dtoMapper::fromPhysicalEvent).collect(Collectors.toList());
+    }
+
+    @Override
+    public EventHistoryDTO getAllEventsOf2023(int page, int size) {
+        EventHistoryDTO events2023 = new EventHistoryDTO();
+        events2023.setEventsDTOs(getAllEventsOf2023FromExcel());
+        events2023.setCurrentPage(page);
+        events2023.setPageSize(size);
+        events2023.setTotalPages(Math.ceilDivExact(getAllEventsOf2023FromExcel().size(), events2023.getPageSize()));
+        return events2023;
+    }
 }

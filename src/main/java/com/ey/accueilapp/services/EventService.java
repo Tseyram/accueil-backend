@@ -3,6 +3,8 @@ package com.ey.accueilapp.services;
 import java.time.LocalDate;
 import java.util.List;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import com.ey.accueilapp.dtos.CulteDTO;
 import com.ey.accueilapp.dtos.EventHistoryDTO;
 import com.ey.accueilapp.dtos.OnLineEventDTO;
@@ -15,8 +17,6 @@ import com.ey.accueilapp.entities.TempsDePriere;
 import com.ey.accueilapp.enums.TypeEvent;
 
 public interface EventService {
-
-    void loadData(String fileName);
 
     PhysicalEventDTO savePhysicalEvent(PhysicalEvent event);
 
@@ -45,5 +45,11 @@ public interface EventService {
     CulteDTO getCulte(Long id);
 
     PhysicalEventDTO getPhysicalEvent(Long id);
+
+    public void saveEventsFromExcel(MultipartFile file);
+
+    public List<PhysicalEventDTO> getAllEventsOf2023FromExcel();
+
+    public EventHistoryDTO getAllEventsOf2023(int page, int size);
 
 }
