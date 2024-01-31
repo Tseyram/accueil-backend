@@ -40,6 +40,16 @@ public class EventController {
         return eventServiceImpl.getAllPhysicalEvents();
     }
 
+    @GetMapping(path = "/events/{id}")
+    public PhysicalEventDTO getPhysicalEvent(@PathVariable(name = "id") Long id) {
+        return eventServiceImpl.getPhysicalEvent(id);
+    }
+
+    @GetMapping(path = "/events/cultecomplet/{id}")
+    public CulteDTO getCulte(@PathVariable(name = "id") Long id) {
+        return eventServiceImpl.getCulte(id);
+    }
+
     @GetMapping(path = "/events/history")
     public EventHistoryDTO getAllPhysicalEventsByPage(
             @RequestParam(name = "page", defaultValue = "0") int page,
@@ -60,12 +70,12 @@ public class EventController {
     }
 
     @PostMapping(path = "/events/prieres")
-    public TempsDePriereDTO saveCulte(@RequestBody TempsDePriere event) {
+    public TempsDePriereDTO saveTempsDePriere(@RequestBody TempsDePriere event) {
         return eventServiceImpl.saveTempsDePriere(event);
 
     }
 
-    @GetMapping(path = "/events/{type}")
+    @GetMapping(path = "/events/type/{type}")
     public List<PhysicalEventDTO> getEventByType(@PathVariable(name = "type") TypeEvent typeEvent) {
 
         return eventServiceImpl.findPhysicalEventByType(typeEvent);
@@ -78,7 +88,7 @@ public class EventController {
     }
 
     @GetMapping(path = "/events/search2")
-    public PhysicalEventDTO findEventByDateAndType(@RequestParam(name = "date") LocalDate date,
+    public List<PhysicalEventDTO> findEventByDateAndType(@RequestParam(name = "date") LocalDate date,
             @RequestParam(name = "type") TypeEvent typeEvent) {
 
         return eventServiceImpl.findPhysicalEventByDateAndType(date, typeEvent);
@@ -99,7 +109,7 @@ public class EventController {
     }
 
     @DeleteMapping(path = "/events/{id}")
-    public void deletePhysical(@PathVariable(name = "type") Long id) {
+    public void deletePhysical(@PathVariable(name = "id") Long id) {
 
         eventServiceImpl.deletePhysicalEvent(id);
     }

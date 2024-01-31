@@ -30,7 +30,7 @@ public interface EventService {
 
     List<PhysicalEventDTO> findPhysicalEventByType(TypeEvent typeEvent);
 
-    PhysicalEventDTO findPhysicalEventByDateAndType(LocalDate dateEvent, TypeEvent typeEvent);
+    List<PhysicalEventDTO> findPhysicalEventByDateAndType(LocalDate dateEvent, TypeEvent typeEvent);
 
     List<PhysicalEventDTO> findPhyscialEventByDateBetween(LocalDate debut, LocalDate fin);
 
@@ -41,5 +41,9 @@ public interface EventService {
     EventHistoryDTO listPhysicalEvents(int page, int size);
 
     List<PhysicalEventDTO> getAllPhysicalEvents();
+
+    CulteDTO getCulte(Long id);
+
+    PhysicalEventDTO getPhysicalEvent(Long id);
 
 }

@@ -113,8 +113,22 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public PhysicalEventDTO findPhysicalEventByDateAndType(LocalDate dateEvent, TypeEvent typeEvent) {
-        return dtoMapper.fromPhysicalEvent(physicalEventRepository.findByDateAndTypeEvent(dateEvent, typeEvent));
+    public List<PhysicalEventDTO> findPhysicalEventByDateAndType(LocalDate dateEvent, TypeEvent typeEvent) {
+        return physicalEventRepository.findByDateAndTypeEvent(dateEvent, typeEvent).stream()
+                .map(dtoMapper::fromPhysicalEvent).collect(Collectors.toList());
+    }
+
+    @Override
+    public CulteDTO getCulte(Long id) {
+        Culte culte = (Culte) physicalEventRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("no culte found"));
+        return dtoMapper.fromCulte(culte);
+    }
+
+    @Override
+    public PhysicalEventDTO getPhysicalEvent(Long id) {
+        return dtoMapper.fromPhysicalEvent(
+                physicalEventRepository.findById(id).orElseThrow(() -> new RuntimeException("no culte found")));
     }
 
 }
