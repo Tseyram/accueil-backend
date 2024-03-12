@@ -7,7 +7,6 @@ import java.util.stream.Collectors;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.ey.accueilapp.dtos.CulteDTO;
 import com.ey.accueilapp.dtos.EventHistoryDTO;
@@ -128,34 +127,33 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public void saveEventsFromExcel(MultipartFile file) {
+    public void saveEventsFromExcel() {
 
-        if (ExcelUploadService.isValid(file)) {
-            try {
-                List<PhysicalEventDTO> events = ExcelUploadService.getEventDatFromExcelFor2023(file.getInputStream());
-                System.out.println("first");
-                for (PhysicalEventDTO e : events) {
-                    if (e.getTypeEvent() == TypeEvent.CULTE) {
-                        CulteDTO eDTO = (CulteDTO) e;
-                        this.saveCulte(dtoMapper.fromCulteDTO(eDTO));
-                    } else {
-                        this.savePhysicalEvent(dtoMapper.fromPhysicalEventDTO(e));
-                    }
+        try {
 
-                    System.out.println("first");
+            List<PhysicalEventDTO> events = ExcelUploadService.getEventDatFromExcelFor2023();
 
+            for (PhysicalEventDTO e : events) {
+                if (e.getTypeEvent() == TypeEvent.CULTE) {
+                    CulteDTO eDTO = (CulteDTO) e;
+                    this.saveCulte(dtoMapper.fromCulteDTO(eDTO));
+                } else {
+                    this.savePhysicalEvent(dtoMapper.fromPhysicalEventDTO(e));
                 }
-            } catch (Exception e) {
-                throw new IllegalArgumentException("The file is not a valid excel file");
-            }
 
+
+
+            }
+        } catch (Exception e) {
+            throw new IllegalArgumentException("The file is not a valid excel file");
         }
+
     }
 
     @Override
     public List<PhysicalEventDTO> getAllEventsOf2023FromExcel() {
-        LocalDate debut = LocalDate.of(01, 01, 2023);
-        LocalDate fin = LocalDate.of(31, 12, 2023);
+        LocalDate debut = LocalDate.of(2023, 1, 1);
+        LocalDate fin = LocalDate.of(2023, 12, 31);
         return physicalEventRepository.findByDateBetween(debut, fin).stream()
                 .map(dtoMapper::fromPhysicalEvent).collect(Collectors.toList());
     }
@@ -169,4 +167,8 @@ public class EventServiceImpl implements EventService {
         events2023.setTotalPages(Math.ceilDivExact(getAllEventsOf2023FromExcel().size(), events2023.getPageSize()));
         return events2023;
     }
+
+
+
+
 }

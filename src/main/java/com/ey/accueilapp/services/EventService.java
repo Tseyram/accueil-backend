@@ -3,8 +3,6 @@ package com.ey.accueilapp.services;
 import java.time.LocalDate;
 import java.util.List;
 
-import org.springframework.web.multipart.MultipartFile;
-
 import com.ey.accueilapp.dtos.CulteDTO;
 import com.ey.accueilapp.dtos.EventHistoryDTO;
 import com.ey.accueilapp.dtos.OnLineEventDTO;
@@ -46,10 +44,11 @@ public interface EventService {
 
     PhysicalEventDTO getPhysicalEvent(Long id);
 
-    public void saveEventsFromExcel(MultipartFile file);
+    public void saveEventsFromExcel();
 
     public List<PhysicalEventDTO> getAllEventsOf2023FromExcel();
 
     public EventHistoryDTO getAllEventsOf2023(int page, int size);
+
 
 }

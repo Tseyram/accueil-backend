@@ -2,9 +2,7 @@ package com.ey.accueilapp.controllers;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Map;
 
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,7 +11,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.ey.accueilapp.dtos.CulteDTO;
 import com.ey.accueilapp.dtos.EventHistoryDTO;
@@ -43,6 +40,12 @@ public class EventController {
         return eventServiceImpl.getAllPhysicalEvents();
     }
 
+    @GetMapping(path = "/events/2023")
+    public List<PhysicalEventDTO> getAllPhysicalEventsOf2023() {
+        eventServiceImpl.saveEventsFromExcel();
+        return eventServiceImpl.getAllEventsOf2023FromExcel();
+    }
+
     @GetMapping(path = "/events/{id}")
     public PhysicalEventDTO getPhysicalEvent(@PathVariable(name = "id") Long id) {
         return eventServiceImpl.getPhysicalEvent(id);
@@ -60,18 +63,16 @@ public class EventController {
         return eventServiceImpl.listPhysicalEvents(page, size);
     }
 
-    @PostMapping("/upload-customers-data")
-    public ResponseEntity<?> uploadCustomersData(@RequestParam("file") MultipartFile file) {
-        this.eventServiceImpl.saveEventsFromExcel(file);
-        return ResponseEntity
-                .ok(Map.of("Message", " Customers data uploaded and saved to database successfully"));
-    }
-
     @GetMapping(path = "/events/history/2023")
     public EventHistoryDTO getAllPhysicalEventsOf2023ByPage(
             @RequestParam(name = "page", defaultValue = "0") int page,
             @RequestParam(name = "size", defaultValue = "3") int size) {
-        return eventServiceImpl.listPhysicalEvents(page, size);
+        return eventServiceImpl.getAllEventsOf2023(page, size);
+    }
+
+    @PostMapping(path = "/events/history/2023")
+    public void getAllPhysicalEventsOf2023ByPage() {
+        eventServiceImpl.saveEventsFromExcel();
     }
 
     @PostMapping(path = "/events/cultes")
